@@ -19,6 +19,7 @@ function App() {
   const [email, setEmail] = useState('');
   const [inputText, setInputText] = useState('');
   const [showDemo, setShowDemo] = useState(false);
+  const [isExplaining, setIsExplaining] = useState(false);
 
   const demoLevels = [
     {
@@ -48,24 +49,160 @@ function App() {
     }
   ];
 
+  // Generate explanations for user input (simulated)
+  const generateExplanations = (text: string) => {
+    const baseText = text.toLowerCase();
+    
+    // Simple keyword-based explanation generation (this would be AI in production)
+    if (baseText.includes('blockchain') || baseText.includes('crypto') || baseText.includes('bitcoin')) {
+      return [
+        {
+          level: 'Scholar',
+          emoji: '🎓',
+          text: 'Blockchain technology represents a distributed ledger system utilizing cryptographic hash functions and consensus mechanisms to maintain an immutable record of transactions across a decentralized network of nodes.'
+        },
+        {
+          level: 'Professional',
+          emoji: '💼',
+          text: 'Blockchain is a digital ledger that records transactions across multiple computers in a way that makes it extremely difficult to change or hack. Each "block" contains transaction data and is linked to the previous block.'
+        },
+        {
+          level: 'Everyday',
+          emoji: '☕',
+          text: 'Think of blockchain like a notebook that everyone in a group shares. When someone writes something new, everyone gets a copy, and no one can erase what\'s already written without everyone noticing.'
+        },
+        {
+          level: 'Teen',
+          emoji: '📱',
+          text: 'Blockchain is like a group chat where every message is permanent and everyone has the full history. You can\'t delete messages or fake them because everyone would see it\'s wrong.'
+        },
+        {
+          level: 'Potato',
+          emoji: '🥔',
+          text: 'It\'s like a magic book where lots of people write stuff, and once it\'s written, nobody can change it. Everyone has the same book, so no cheating!'
+        }
+      ];
+    } else if (baseText.includes('ai') || baseText.includes('artificial intelligence') || baseText.includes('machine learning')) {
+      return [
+        {
+          level: 'Scholar',
+          emoji: '🎓',
+          text: 'Artificial Intelligence encompasses computational systems designed to perform tasks typically requiring human cognitive abilities, utilizing algorithms, neural networks, and statistical models to process data and make autonomous decisions.'
+        },
+        {
+          level: 'Professional',
+          emoji: '💼',
+          text: 'AI refers to computer systems that can perform tasks normally requiring human intelligence, such as recognizing patterns, making decisions, and learning from experience through data analysis.'
+        },
+        {
+          level: 'Everyday',
+          emoji: '☕',
+          text: 'AI is like teaching computers to think and learn like humans do. They can recognize faces, understand speech, and even play games by learning from lots of examples.'
+        },
+        {
+          level: 'Teen',
+          emoji: '📱',
+          text: 'AI is basically smart computer programs that can learn stuff on their own. Like how your phone knows your face or how Netflix suggests movies you might like.'
+        },
+        {
+          level: 'Potato',
+          emoji: '🥔',
+          text: 'Smart computers that can learn things! Like a really clever robot brain that gets better at stuff by practicing lots and lots.'
+        }
+      ];
+    } else if (baseText.includes('climate') || baseText.includes('global warming') || baseText.includes('carbon')) {
+      return [
+        {
+          level: 'Scholar',
+          emoji: '🎓',
+          text: 'Anthropogenic climate change results from increased atmospheric concentrations of greenhouse gases, primarily CO2, leading to enhanced radiative forcing and subsequent alterations in global temperature patterns and weather systems.'
+        },
+        {
+          level: 'Professional',
+          emoji: '💼',
+          text: 'Climate change is caused by human activities that release greenhouse gases into the atmosphere, trapping heat and causing global temperatures to rise, which affects weather patterns worldwide.'
+        },
+        {
+          level: 'Everyday',
+          emoji: '☕',
+          text: 'Climate change happens because we\'re putting too much pollution in the air, which acts like a blanket around Earth, making it warmer and changing our weather.'
+        },
+        {
+          level: 'Teen',
+          emoji: '📱',
+          text: 'We\'re basically hotboxing the planet with pollution. The Earth is getting warmer, which is messing up the weather and making things pretty crazy.'
+        },
+        {
+          level: 'Potato',
+          emoji: '🥔',
+          text: 'Earth is getting too hot because we put too much yucky stuff in the air. It\'s like putting too many blankets on - everything gets too warm!'
+        }
+      ];
+    } else {
+      // Generic explanations for any other text
+      return [
+        {
+          level: 'Scholar',
+          emoji: '🎓',
+          text: 'This concept involves complex interconnected systems and mechanisms that operate according to established principles and theoretical frameworks within its respective domain.'
+        },
+        {
+          level: 'Professional',
+          emoji: '💼',
+          text: 'This topic covers important principles and processes that work together in a systematic way to achieve specific outcomes or functions.'
+        },
+        {
+          level: 'Everyday',
+          emoji: '☕',
+          text: 'This is about how different parts work together to make something happen, kind of like how all the parts of a car work together to make it drive.'
+        },
+        {
+          level: 'Teen',
+          emoji: '📱',
+          text: 'It\'s basically about how stuff works together to do things. Think of it like how all your apps work together on your phone.'
+        },
+        {
+          level: 'Potato',
+          emoji: '🥔',
+          text: 'Things work together to make other things happen! Like how ingredients work together to make yummy food.'
+        }
+      ];
+    }
+  };
+
+  const [userExplanations, setUserExplanations] = useState<typeof demoLevels>([]);
+
   const handleTryNow = () => {
     document.getElementById('input-section')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleSeeExample = () => {
+    setShowDemo(false);
     document.getElementById('demo-section')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleExplainThis = () => {
     if (inputText.trim()) {
-      setShowDemo(true);
-      document.getElementById('demo-section')?.scrollIntoView({ behavior: 'smooth' });
+      setIsExplaining(true);
+      
+      // Simulate AI processing time
+      setTimeout(() => {
+        const explanations = generateExplanations(inputText);
+        setUserExplanations(explanations);
+        setShowDemo(true);
+        setIsExplaining(false);
+        setActiveDemo(0);
+        document.getElementById('demo-section')?.scrollIntoView({ behavior: 'smooth' });
+      }, 2000);
     }
   };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
   };
+
+  const currentExplanations = showDemo && userExplanations.length > 0 ? userExplanations : demoLevels;
+  const currentText = showDemo && inputText ? inputText : 'Quantum entanglement manifests as a non-local correlation phenomenon whereby measurement of one particle instantaneously affects its entangled partner, regardless of spatial separation, challenging classical locality principles.';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-blue-100">
@@ -119,16 +256,25 @@ function App() {
                   <textarea
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
-                    placeholder="Try pasting a research paper, legal document, or that confusing news article..."
+                    placeholder="Try pasting something about blockchain, AI, climate change, or any complex topic..."
                     className="w-full bg-gray-50 rounded-xl p-4 border-2 border-dashed border-gray-300 min-h-[120px] resize-none focus:border-purple-500 focus:outline-none text-gray-700 placeholder-gray-500"
                   />
                   <button 
                     onClick={handleExplainThis}
-                    disabled={!inputText.trim()}
+                    disabled={!inputText.trim() || isExplaining}
                     className="w-full mt-4 px-6 py-3 bg-gradient-to-r from-blue-500 to-teal-500 text-white font-bold rounded-xl hover:shadow-lg transform hover:scale-102 transition-all duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                   >
-                    <Zap className="w-5 h-5 mr-2" />
-                    Explain This!
+                    {isExplaining ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                        Explaining...
+                      </>
+                    ) : (
+                      <>
+                        <Zap className="w-5 h-5 mr-2" />
+                        Explain This!
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
@@ -250,15 +396,12 @@ function App() {
             <div className="bg-gray-50 rounded-2xl p-6 mb-8">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">Original Text:</h3>
               <p className="text-gray-600 italic">
-                {showDemo && inputText ? 
-                  `"${inputText.substring(0, 200)}${inputText.length > 200 ? '...' : ''}"` :
-                  '"Quantum entanglement manifests as a non-local correlation phenomenon whereby measurement of one particle instantaneously affects its entangled partner, regardless of spatial separation..."'
-                }
+                "{currentText.substring(0, 200)}{currentText.length > 200 ? '...' : ''}"
               </p>
             </div>
             
             <div className="flex flex-wrap gap-2 mb-8 justify-center">
-              {demoLevels.map((level, index) => (
+              {currentExplanations.map((level, index) => (
                 <button
                   key={index}
                   onClick={() => setActiveDemo(index)}
@@ -277,11 +420,11 @@ function App() {
             <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-gray-100">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-2xl font-bold text-gray-900 flex items-center">
-                  <span className="mr-3">{demoLevels[activeDemo].emoji}</span>
-                  {demoLevels[activeDemo].level} Level
+                  <span className="mr-3">{currentExplanations[activeDemo].emoji}</span>
+                  {currentExplanations[activeDemo].level} Level
                 </h3>
                 <button 
-                  onClick={() => copyToClipboard(demoLevels[activeDemo].text)}
+                  onClick={() => copyToClipboard(currentExplanations[activeDemo].text)}
                   className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
                   title="Copy to clipboard"
                 >
@@ -289,10 +432,7 @@ function App() {
                 </button>
               </div>
               <p className="text-lg text-gray-700 leading-relaxed">
-                {showDemo && inputText ? 
-                  `This would be your ${demoLevels[activeDemo].level.toLowerCase()}-level explanation! (Demo mode - actual AI processing coming soon)` :
-                  demoLevels[activeDemo].text
-                }
+                {currentExplanations[activeDemo].text}
               </p>
             </div>
           </div>
